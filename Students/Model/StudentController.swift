@@ -8,6 +8,18 @@
 
 import Foundation
 
+enum TrackType: Int {
+    case none
+    case iOS
+    case Web
+    case UX
+}
+
+enum SortOption: Int {
+    case firstName
+    case lastName
+}
+
 class StudentController {
     
     // MARK: - Private Property
@@ -35,4 +47,37 @@ class StudentController {
             }
         }
     }
+    
+    func filter(with trackType: TrackType, sortedBy sorter: SortOption) -> [Student] {
+        var updatedStudents: [Student]
+        
+        switch trackType {
+        case.iOS:
+            updatedStudents = students.filter({ student -> Bool in
+                return student.course == "iOS"
+            })
+        case .Web:
+            updatedStudents = students.filter({ // Magic variable instead of student.
+                return $0.course == "Web"
+            })
+        case .UX:
+            updatedStudents = students.filter { $0.course == "UX" } // We take out return because we only had one line in our return- so we can imply the "return" part.
+        
+        // These three cases do the same thing, but the code gets increasingly more elegant.
+        default:
+            updatedStudents = students
+        }
+        
+        switch sorter {
+        case .firstName:
+            updatedStudents = updatedStudents.sorted(by: { studentA, studentB -> Bool in
+                return studentA.firstName < studentB.firstName
+            })
+        case .lastName:
+            updatedStudents = updatedStudents.sorted { $0.lastName < $1.lastName }
+        }
+        
+        return updatedStudents
+    }
+    
 }
